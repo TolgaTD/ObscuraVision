@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ObscuraVision</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="bg-overlay"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="uil uil-eye"></i>
+                <h1>ObscuraVision</h1>
+            </div>
+            <p class="subtitle">Academic Project: Next-Gen Malware Analysis Powered by MobSF, VirusTotal & LLMs</p>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+
+            <!-- Left Column: Configuration & Upload -->
+            <div class="col-left">
+
+                <!-- Configuration Card -->
+                <div class="card config-card">
+                    <div class="card-header">
+                        <i class="uil uil-cog"></i>
+                        <h3>Configuration</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <label>MobSF API Key</label>
+                            <input type="password" id="mobsf-key" placeholder="Enter MobSF API Key"
+                                value="">
+                        </div>
+                        <div class="input-group">
+                            <label>VirusTotal API Key</label>
+                            <input type="password" id="vt-key" placeholder="Enter VirusTotal API Key"
+                                value="">
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="input-group">
+                            <label>AI Model Provider</label>
+                            <select id="llm-provider" onchange="toggleLLMFields()">
+                                <option value="gemini">Google Gemini (Cloud)</option>
+                                <option value="ollama">Ollama (Local)</option>
+                            </select>
+                        </div>
+
+                        <div id="gemini-fields">
+                            <div class="input-group">
+                                <label>Gemini API Key</label>
+                                <input type="password" id="gemini-key" placeholder="Enter Gemini API Key"
+                                    value="">
+                            </div>
+                        </div>
+
+                        <div id="ollama-fields" style="display: none;">
+                            <div class="input-group">
+                                <label>Ollama Model Name</label>
+                                <input type="text" id="ollama-model" value="llama3" placeholder="e.g. llama3, mistral">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sponsors & Credits Card -->
+                <div class="card credits-card">
+                    <div class="card-header">
+                        <i class="uil uil-award"></i>
+                        <h3>Project Credits & Sponsors</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="sponsors-list">
+                            <div class="sponsor-item">
+                                <strong>AndroZoo</strong>
+                                <span class="badge">Dataset Provider</span>
+                            </div>
+                            <div class="sponsor-item">
+                                <strong>VirusTotal</strong>
+                                <span class="badge-sponsored">Premium API Provider</span>
+                            </div>
+                            <div class="sponsor-item">
+                                <strong>MobSF</strong>
+                                <span class="badge">Open Source Static Analyzer</span>
+                            </div>
+                        </div>
+                        <hr class="dim-divider">
+                        <div class="team-section">
+                            <h4>Developed By</h4>
+                            <div class="team-list">
+                                <a href="https://www.linkedin.com/in/tolga-demirel/" target="_blank">Tolga DEMİREL</a>
+                                <a href="https://www.linkedin.com/in/an%C4%B1l-eray-kocab%C4%B1y%C4%B1k/"
+                                    target="_blank">Anıl Eray KOCABIYIK</a>
+                                <a href="https://www.linkedin.com/in/tuna-karak%C3%B6se-317239256/" target="_blank">Tuna
+                                    KARAKÖSE</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Card -->
+                <div class="card upload-card">
+                    <div class="card-header">
+                        <i class="uil uil-upload"></i>
+                        <h3>Upload APK</h3>
+                    </div>
+                    <div class="upload-area" id="drop-zone">
+                        <i class="uil uil-cloud-upload"></i>
+                        <p>Drag & Drop APK file here</p>
+                        <span>or</span>
+                        <button class="btn-primary" onclick="document.getElementById('file-input').click()">Browse
+                            Files</button>
+                        <input type="file" id="file-input" hidden accept=".apk">
+                    </div>
+                    <div id="file-info" class="file-info hidden">
+                        <i class="uil uil-file-alt"></i>
+                        <span id="filename">app.apk</span>
+                        <i class="uil uil-times remove-file" onclick="clearFile()"></i>
+                    </div>
+                    <button id="analyze-btn" class="btn-analyze" disabled onclick="startAnalysis()">
+                        <i class="uil uil-search-alt"></i> Start Analysis
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Status & Results -->
+            <div class="col-right">
+
+                <!-- Progress State -->
+                <div id="progress-container" class="card status-card hidden">
+                    <h3>Analysis in Progress</h3>
+                    <div class="steps">
+                        <div class="step active" id="step-1">
+                            <div class="circle"><i class="uil uil-upload"></i></div>
+                            <span>Uploading</span>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" id="step-2">
+                            <div class="circle"><i class="uil uil-bug"></i></div>
+                            <span>MobSF Scan</span>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" id="step-3">
+                            <div class="circle"><i class="uil uil-shield"></i></div>
+                            <span>VirusTotal</span>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" id="step-4">
+                            <div class="circle"><i class="uil uil-brain"></i></div>
+                            <span>AI Analysis</span>
+                        </div>
+                    </div>
+                    <p id="status-text" class="status-text">Initializing upload...</p>
+                </div>
+
+                <!-- Results State -->
+                <div id="result-container" class="card result-card hidden">
+                    <div id="verdict-banner" class="verdict-banner unknown">
+                        <span id="verdict-label">PENDING</span>
+                    </div>
+
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('ai')">AI Insights</button>
+                        <button class="tab" onclick="switchTab('raw')">Raw Data</button>
+                    </div>
+
+                    <div id="tab-ai" class="tab-content active">
+                        <div id="ai-output" class="markdown-body">
+                            <!-- AI Content -->
+                        </div>
+                    </div>
+
+                    <div id="tab-raw" class="tab-content">
+                        <pre id="raw-json"></pre>
+                    </div>
+
+                    <button class="btn-secondary" onclick="resetApp()">Analyze Another</button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <img src="/static/obscura_vision_hero.png" alt="Security" width="250"
+                        style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <h3>Ready to Analyze</h3>
+                    <p>Configure your API keys and upload an APK file to begin the comprehensive malware assessment.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
