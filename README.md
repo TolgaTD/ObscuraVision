@@ -5,6 +5,7 @@ ObscuraVision is an advanced academic project designed to modernize mobile appli
 
 ![ObscuraVision Interface](static/obscura_vision_hero.png)
 
+
 ## 🚀 Key Features
 
 *   **⚡ Automated Static Analysis:** Leverages [MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF) to extract permissions, secrets, API calls, and manifest vulnerabilities.
@@ -45,6 +46,7 @@ ObscuraVision is an advanced academic project designed to modernize mobile appli
 
 5.  **Access the Dashboard:**
     Open your browser and navigate to `http://localhost:8000`.
+
 
 ## 🤝 Credits
 
