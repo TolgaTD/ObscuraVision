@@ -46,7 +46,9 @@ ObscuraVision is an advanced academic project designed to modernize mobile appli
 
 5.  **Access the Dashboard:**
     Open your browser and navigate to `http://localhost:8000`.
-![Uploading image.png…]()
+
+<img width="711" height="911" alt="image" src="https://github.com/user-attachments/assets/8ba422ab-4480-4e3b-a8af-e71e228a1ee7" />
+
 
 
 ## 🤝 Credits
